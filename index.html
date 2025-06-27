@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Appointment Booking System</title>
-   
+    <style src="booking.css"></style>
+    <link rel="stylesheet" href="booking.css">
 </head>
 <body>
     <!-- Login Form -->
@@ -27,60 +28,108 @@
 
     <!-- Main Application -->
     <div id="mainApp" class="main-app" style="display: none;">
-        <!-- Header Banner -->
-        <header class="header-banner">
-            <div class="header-content">
-                <h1>Appointment Booking System</h1>
-                <div class="user-info">
-                    <span id="currentUser">Admin</span> | 
-                    <span id="currentDateTime"></span>
-                    <button id="logoutBtn" class="logout-btn">Logout</button>
+        <!-- Header -->
+        <header class="modern-header">
+            <div class="header-container">
+                <div class="header-left">
+                    <div class="calendar-icon">📅</div>
+                    <h1>Calendar</h1>
+                </div>
+                <div class="header-right">
+                    <button id="addAppointmentBtn" class="add-btn">+ Add Appointment</button>
+                    <div class="user-menu">
+                        <span id="currentUser">Admin</span>
+                        <button id="logoutBtn" class="logout-btn">Logout</button>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- Calendar Controls -->
-        <div class="calendar-controls">
-            <button id="prevWeeks" class="control-btn">← Previous 2 Weeks</button>
-            <h2 id="dateRange" class="date-range"></h2>
-            <button id="nextWeeks" class="control-btn">Next 2 Weeks →</button>
+        <!-- Calendar Navigation -->
+        <div class="calendar-nav">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <button id="prevWeeks" class="nav-btn">
+                        <span>←</span>
+                    </button>
+                    <button id="nextWeeks" class="nav-btn">
+                        <span>→</span>
+                    </button>
+                    <h2 id="dateRange" class="date-title">March 2023</h2>
+                </div>
+                <div class="nav-right">
+                    <div class="view-toggle">
+                        <button class="view-btn active">Month</button>
+                        <button class="view-btn">Week</button>
+                        <button class="view-btn">Day</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Calendar Grid -->
-        <div class="calendar-container">
-            <div id="calendar" class="calendar-grid"></div>
+        <!-- Calendar Content -->
+        <div class="calendar-wrapper">
+            <div class="calendar-container">
+                <!-- Days Header -->
+                <div class="calendar-header">
+                    <div class="day-header">Mon</div>
+                    <div class="day-header">Tue</div>
+                    <div class="day-header">Wed</div>
+                    <div class="day-header">Thu</div>
+                    <div class="day-header">Fri</div>
+                    <div class="day-header">Sat</div>
+                    <div class="day-header">Sun</div>
+                </div>
+                
+                <!-- Calendar Grid -->
+                <div id="calendar" class="calendar-grid"></div>
+            </div>
         </div>
 
         <!-- Quick Actions -->
         <div class="quick-actions">
-            <button id="addAppointmentBtn" class="action-btn">+ Add Appointment</button>
-            <button id="viewAvailableBtn" class="action-btn">View Available Slots</button>
-            <button id="generateSampleBtn" class="action-btn">🎲 Generate Sample Data</button>
-            <button id="clearAllBtn" class="action-btn">🗑️ Clear All</button>
+            <button id="viewAvailableBtn" class="action-btn secondary">View Available Slots</button>
+            <button id="generateSampleBtn" class="action-btn secondary">🎲 Generate Sample Data</button>
+            <button id="clearAllBtn" class="action-btn danger">🗑️ Clear All</button>
         </div>
     </div>
 
     <!-- Modal for Adding Appointments -->
     <div id="appointmentModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Add Appointment</h3>
+            <div class="modal-header">
+                <h3>Add Appointment</h3>
+                <span class="close">&times;</span>
+            </div>
             <form id="appointmentForm">
-                <div class="form-group">
-                    <label for="appointmentDate">Date:</label>
-                    <input type="date" id="appointmentDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="appointmentTime">Time:</label>
-                    <select id="appointmentTime" required></select>
-                </div>
-                <div class="form-group">
-                    <label for="appointmentReason">Reason:</label>
-                    <input type="text" id="appointmentReason" placeholder="Enter appointment reason" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointmentDate">Date:</label>
+                        <input type="date" id="appointmentDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime">Time:</label>
+                        <select id="appointmentTime" required></select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="clientName">Client Name:</label>
                     <input type="text" id="clientName" placeholder="Enter client name" required>
+                </div>
+                <div class="form-group">
+                    <label for="clientPhone">Phone Number:</label>
+                    <input type="tel" id="clientPhone" placeholder="+61406910251" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentReason">Service:</label>
+                    <select id="appointmentReason" required>
+                        <option value="">Select a service</option>
+                        <option value="Consultation">Consultation</option>
+                        <option value="Follow-up">Follow-up</option>
+                        <option value="Check-up">Check-up</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="Review">Review</option>
+                    </select>
                 </div>
                 <button type="submit" class="submit-btn">Book Appointment</button>
             </form>
@@ -90,8 +139,10 @@
     <!-- Modal for Viewing/Editing Appointments -->
     <div id="viewModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Appointment Details</h3>
+            <div class="modal-header">
+                <h3>Appointment Details</h3>
+                <span class="close">&times;</span>
+            </div>
             <div id="appointmentDetails"></div>
             <div class="modal-actions">
                 <button id="editAppointment" class="edit-btn">Edit</button>
@@ -103,561 +154,131 @@
     <!-- Available Slots Modal -->
     <div id="availableModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Available Time Slots</h3>
+            <div class="modal-header">
+                <h3>Available Time Slots</h3>
+                <span class="close">&times;</span>
+            </div>
             <div id="availableSlots"></div>
         </div>
     </div>
 
-    <style>
-/* styles.css */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f8f9fa;
-    min-height: 100vh;
-    color: #333; }
-
-/* Login Styles */
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-}
-
-.login-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    min-width: 400px;
-    animation: slideIn 0.5s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.login-card h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #4a5568;
-    font-size: 28px;
-    font-weight: 600;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #4a5568;
-}
-
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    background: white;
-}
-
-.form-group input:focus, .form-group select:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.login-btn, .submit-btn {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.login-btn:hover, .submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-}
-
-/* Main App Styles */
-.main-app {
-
-    min-height: 100vh;
-    background: #f8f9fa;
-}
-
-
-.header-banner {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 20px 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-}
-
-.header-content h1 {
-    color: #4a5568;
-    font-size: 32px;
-    font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    font-weight: 500;
-    color: #4a5568;
-}
-
-.logout-btn {
-    padding: 8px 16px;
-    background: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.logout-btn:hover {
-    background: #dc2626;
-    transform: translateY(-1px);
-}
-
-/* Calendar Controls */
-.calendar-controls {
-    max-width: 1200px;
-    margin: 30px auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-}
-
-.control-btn {
-    padding: 12px 24px;
-    background: #1f2937;
-    border: 2px solid #374151;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
-    color: white;
-    transition: all 0.3s ease;
-}
-
-.control-btn:hover {
-    background: #374151;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.date-range {
-    color: #374151;  /* Change from white to dark gray for visibility */
-    font-size: 24px;
-    font-weight: 600;
-    text-shadow: none;  /* Remove text shadow */
-}
-
-/* Calendar Grid */
-.calendar-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: 100px repeat(14, 1fr);
-    gap: 2px;
-    background: rgba(255, 255, 255, 0.9);  /* Change from rgba(255, 255, 255, 0.1) */
-    border-radius: 16px;
-    padding: 20px;
-    backdrop-filter: blur(10px);
-}
-
-.time-slot, .day-header, .appointment-slot {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 12px 8px;
-    text-align: center;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.day-header {
-    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-    color: white;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.time-slot {
-    background: rgba(255, 255, 255, 0.7);
-    color: #4a5568;
-    font-size: 12px;
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
-}
-
-.appointment-slot {
-    cursor: pointer;
-    min-height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-}
-
-.appointment-slot:hover {
-    background: rgba(255, 255, 255, 1);
-    transform: scale(1.02);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.appointment-slot.available {
-    background: rgba(34, 197, 94, 0.2);
-    border: 2px dashed #22c55e;
-}
-
-.appointment-slot.booked {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    font-weight: 600;
-}
-
-.appointment-slot.available:hover {
-    background: rgba(34, 197, 94, 0.3);
-}
-
-/* Quick Actions */
-.quick-actions {
-    max-width: 1200px;
-    margin: 30px auto;
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    padding: 0 20px;
-}
-
-.action-btn {
-    padding: 14px 28px;
-    background: #1f2937;
-    border: 2px solid #374151;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
-    color: white;
-    transition: all 0.3s ease;
-}
-
-.action-btn:hover {
-    background: #374151;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-}
-
-.modal-content {
-    background: white;
-    margin: 5% auto;
-    padding: 30px;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    animation: modalSlide 0.3s ease-out;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-@keyframes modalSlide {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    position: absolute;
-    right: 20px;
-    top: 15px;
-}
-
-.close:hover {
-    color: #000;
-}
-
-.modal h3 {
-    margin-bottom: 20px;
-    color: #4a5568;
-    font-size: 24px;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.edit-btn, .delete-btn {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.edit-btn {
-    background: #3b82f6;
-    color: white;
-}
-
-.delete-btn {
-    background: #ef4444;
-    color: white;
-}
-
-.edit-btn:hover, .delete-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-#appointmentDetails {
-    background: #f8fafc;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-}
-
-#availableSlots {
-    max-height: 400px;
-    overflow-y: auto;
-    display: grid;
-    gap: 10px;
-}
-
-.available-slot {
-    background: #f0f9ff;
-    border: 2px solid #0ea5e9;
-    border-radius: 8px;
-    padding: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.available-slot:hover {
-    background: #0ea5e9;
-    color: white;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .calendar-grid {
-        grid-template-columns: 80px repeat(7, 1fr);
-        font-size: 10px;
-    }
-    
-    .header-content {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .calendar-controls {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .quick-actions {
-        flex-direction: column;
-        align-items: center;
-    }
-}
-    </style>
-
-    <script>
-// app.js
+/* Modern Calendar Styles */
+<script> 
+// Modern Appointment Booking System
 class AppointmentBookingSystem {
     constructor() {
         this.appointments = {};
-        this.currentWeekStart = this.getWeekStart(new Date());
+        this.currentDate = new Date();
+        this.currentView = 'month';
         this.businessHours = {
-            start: 9, // 9 AM
-            end: 17,  // 5 PM
-            interval: 1 // 1 hour intervals
+            start: 9,
+            end: 17,
+            interval: 1
         };
         this.isLoggedIn = false;
         this.selectedSlot = null;
+        this.apiUrl = 'http://localhost:3000/api'; // API endpoint
         
         this.initializeEventListeners();
-        this.loadSampleData();
+        this.loadAppointments();
         this.updateDateTime();
         setInterval(() => this.updateDateTime(), 1000);
     }
 
-    // Add this method to your AppointmentBookingSystem class
-// Add this method inside your AppointmentBookingSystem class
-generateRandomAppointments(numberOfAppointments = 20) {
-    const clientNames = [
-        'Alice Johnson', 'Bob Smith', 'Carol Davis', 'David Wilson', 'Emma Brown',
-        'Frank Miller', 'Grace Lee', 'Henry Taylor', 'Ivy Chen', 'Jack Robinson',
-        'Kate Anderson', 'Liam Murphy', 'Maya Patel', 'Noah Garcia', 'Olivia Martinez',
-        'Paul Thompson', 'Quinn Roberts', 'Ruby Williams', 'Sam Clark', 'Tara Lewis',
-        'Alex Cooper', 'Sarah Kim', 'Mike Johnson', 'Lisa Zhang', 'Chris Evans',
-        'Jessica Wong', 'Michael Brown', 'Amanda White', 'Ryan Clark', 'Sophia Garcia',
-        'Daniel Lee', 'Rachel Davis', 'James Wilson', 'Maria Rodriguez', 'Kevin Chen',
-        'Ashley Taylor', 'Brandon Kim', 'Nicole Miller', 'Tyler Anderson', 'Samantha Moore'
-    ];
-    
-    const appointmentReasons = [
-        'Initial Consultation', 'Follow-up Meeting', 'Project Review', 'Strategy Session',
-        'Health Checkup', 'Dental Cleaning', 'Eye Examination', 'Therapy Session',
-        'Legal Consultation', 'Financial Planning', 'Business Meeting', 'Job Interview',
-        'Product Demo', 'Training Session', 'Design Review', 'Performance Review',
-        'Maintenance Check', 'Sales Meeting', 'Contract Signing', 'Brainstorming Session',
-        'Team Standup', 'Client Presentation', 'Budget Review', 'Progress Update',
-        'Medical Consultation', 'Career Counseling', 'Technical Support', 'Code Review',
-        'User Testing', 'Sprint Planning', 'Risk Assessment', 'Quality Assurance',
-        'Customer Support', 'Vendor Meeting', 'Board Meeting', 'Team Building',
-        'Workshop Session', 'Compliance Review', 'Security Audit', 'Data Analysis'
-    ];
-    
-    const timeSlots = this.generateTimeSlots();
-    let appointmentsCreated = 0;
-    
-    // Clear existing appointments in current view
-    for (let i = 0; i < 14; i++) {
-        const date = new Date(this.currentWeekStart.getTime() + (i * 24 * 60 * 60 * 1000));
-        const dateKey = this.formatDateKey(date);
-        timeSlots.forEach(time => {
-            this.deleteAppointment(dateKey, time);
-        });
-    }
-    
-    // Generate new random appointments (excluding weekends)
-    for (let i = 0; i < numberOfAppointments; i++) {
-        let attempts = 0;
-        
-        while (attempts < 50 && appointmentsCreated < numberOfAppointments) {
-            // Random day within current 2-week period
-            const randomDay = Math.floor(Math.random() * 14);
-            const appointmentDate = new Date(this.currentWeekStart.getTime() + (randomDay * 24 * 60 * 60 * 1000));
-            const dayOfWeek = appointmentDate.getDay(); // 0 = Sunday, 6 = Saturday
-            
-            // Skip weekends (Saturday = 6, Sunday = 0)
-            if (dayOfWeek === 0 || dayOfWeek === 6) {
-                attempts++;
-                continue;
+    // API Integration Methods
+    async loadAppointments() {
+        try {
+            const response = await fetch(`${this.apiUrl}/appointments`);
+            if (response.ok) {
+                const appointments = await response.json();
+                this.appointments = {};
+                appointments.forEach(apt => {
+                    const key = `${apt.date}_${apt.time}`;
+                    this.appointments[key] = apt;
+                });
+                if (this.isLoggedIn) {
+                    this.renderCalendar();
+                }
             }
-            
-            const dateKey = this.formatDateKey(appointmentDate);
-            
-            // Random time slot
-            const randomTime = timeSlots[Math.floor(Math.random() * timeSlots.length)];
-            
-            // Check if slot is available
-            if (!this.getAppointment(dateKey, randomTime)) {
-                const randomClient = clientNames[Math.floor(Math.random() * clientNames.length)];
-                const randomReason = appointmentReasons[Math.floor(Math.random() * appointmentReasons.length)];
-                
-                const appointment = {
-                    clientName: randomClient,
-                    reason: randomReason,
-                    createdAt: new Date().toISOString()
-                };
-                
-                this.setAppointment(dateKey, randomTime, appointment);
-                appointmentsCreated++;
-                break;
-            }
-            attempts++;
+        } catch (error) {
+            console.error('Failed to load appointments:', error);
         }
     }
-    
-    // Refresh calendar display
-    this.renderCalendar();
-    return appointmentsCreated;
-}
 
-clearAllAppointments() {
-    // Clear all appointments in current 2-week view
-    for (let i = 0; i < 14; i++) {
-        const date = new Date(this.currentWeekStart.getTime() + (i * 24 * 60 * 60 * 1000));
-        const dateKey = this.formatDateKey(date);
-        const timeSlots = this.generateTimeSlots();
-        timeSlots.forEach(time => {
-            this.deleteAppointment(dateKey, time);
-        });
+    async saveAppointment(appointmentData) {
+        try {
+            const response = await fetch(`${this.apiUrl}/appointments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(appointmentData)
+            });
+            
+            if (response.ok) {
+                const appointment = await response.json();
+                const key = `${appointment.date}_${appointment.time}`;
+                this.appointments[key] = appointment;
+                this.renderCalendar();
+                return { success: true, appointment };
+            } else {
+                const error = await response.json();
+                return { success: false, error: error.message };
+            }
+        } catch (error) {
+            console.error('Failed to save appointment:', error);
+            return { success: false, error: 'Network error' };
+        }
     }
-    this.renderCalendar();
-}
+
+    async deleteAppointmentFromDB(id) {
+        try {
+            const response = await fetch(`${this.apiUrl}/appointments/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                await this.loadAppointments();
+                return { success: true };
+            } else {
+                const error = await response.json();
+                return { success: false, error: error.message };
+            }
+        } catch (error) {
+            console.error('Failed to delete appointment:', error);
+            return { success: false, error: 'Network error' };
+        }
+    }
+
+    async searchByPhone(phone) {
+        try {
+            const response = await fetch(`${this.apiUrl}/appointments/search?phone=${encodeURIComponent(phone)}`);
+            if (response.ok) {
+                return await response.json();
+            }
+            return [];
+        } catch (error) {
+            console.error('Failed to search by phone:', error);
+            return [];
+        }
+    }
+
+    generateBookingReference() {
+        const year = new Date().getFullYear();
+        const randomNum = Math.floor(Math.random() * 999999).toString().padStart(6, '0');
+        return `APT-${year}-${randomNum}`;
+    }
+
+    getNextBookingNumber() {
+        let maxNumber = 0;
+        Object.values(this.appointments).forEach(appointment => {
+            if (appointment.bookingNumber && appointment.bookingNumber > maxNumber) {
+                maxNumber = appointment.bookingNumber;
+            }
+        });
+        return maxNumber + 1;
+    }
 
     initializeEventListeners() {
         // Login form
@@ -673,11 +294,11 @@ clearAllAppointments() {
 
         // Calendar navigation
         document.getElementById('prevWeeks').addEventListener('click', () => {
-            this.navigateWeeks(-14);
+            this.navigateMonth(-1);
         });
 
         document.getElementById('nextWeeks').addEventListener('click', () => {
-            this.navigateWeeks(14);
+            this.navigateMonth(1);
         });
 
         // Quick actions
@@ -690,17 +311,16 @@ clearAllAppointments() {
         });
 
         document.getElementById('generateSampleBtn').addEventListener('click', () => {
-    const created = this.generateRandomAppointments(25);
-    alert(`Generated ${created} random appointments (weekdays only) for the current 2-week period!`);
-});
+            const created = this.generateRandomAppointments(25);
+            alert(`Generated ${created} random appointments!`);
+        });
 
-// Clear all appointments button
-document.getElementById('clearAllBtn').addEventListener('click', () => {
-    if (confirm('Are you sure you want to clear all appointments in the current view?')) {
-        this.clearAllAppointments();
-        alert('All appointments cleared from current view!');
-    }
-});
+        document.getElementById('clearAllBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all appointments?')) {
+                this.clearAllAppointments();
+                alert('All appointments cleared!');
+            }
+        });
 
         // Modal handling
         document.querySelectorAll('.close').forEach(closeBtn => {
@@ -755,27 +375,11 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
     }
 
     updateDateTime() {
-        const now = new Date();
-        const options = {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        };
-        document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        // This can be used for real-time updates if needed
     }
 
-    getWeekStart(date) {
-        const d = new Date(date);
-        const day = d.getDay();
-        const diff = d.getDate() - day;
-        return new Date(d.setDate(diff));
-    }
-
-    navigateWeeks(days) {
-        this.currentWeekStart = new Date(this.currentWeekStart.getTime() + (days * 24 * 60 * 60 * 1000));
+    navigateMonth(direction) {
+        this.currentDate.setMonth(this.currentDate.getMonth() + direction);
         this.renderCalendar();
     }
 
@@ -789,80 +393,77 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
 
     renderCalendar() {
         const calendar = document.getElementById('calendar');
-        const timeSlots = this.generateTimeSlots();
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
         
         // Update date range display
-        const endDate = new Date(this.currentWeekStart.getTime() + (13 * 24 * 60 * 60 * 1000));
         document.getElementById('dateRange').textContent = 
-            `${this.formatDate(this.currentWeekStart)} - ${this.formatDate(endDate)}`;
+            this.currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
         // Clear calendar
         calendar.innerHTML = '';
 
-        // Create header row
-        calendar.appendChild(this.createEmptyCell()); // Empty cell for time column
+        // Get first day of month and number of days
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startDate = new Date(firstDay);
+        startDate.setDate(startDate.getDate() - firstDay.getDay() + 1); // Start from Monday
+
+        // Create calendar days
+        for (let i = 0; i < 42; i++) { // 6 weeks
+            const currentDay = new Date(startDate);
+            currentDay.setDate(startDate.getDate() + i);
+            
+            const dayElement = this.createDayElement(currentDay, month);
+            calendar.appendChild(dayElement);
+        }
+    }
+
+    createDayElement(date, currentMonth) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
         
-        for (let i = 0; i < 14; i++) {
-            const date = new Date(this.currentWeekStart.getTime() + (i * 24 * 60 * 60 * 1000));
-            const dayHeader = document.createElement('div');
-            dayHeader.className = 'day-header';
-            dayHeader.textContent = this.formatDayHeader(date);
-            calendar.appendChild(dayHeader);
+        if (date.getMonth() !== currentMonth) {
+            dayDiv.classList.add('other-month');
         }
 
-        // Create time slots and appointment grid
+        const dayNumber = document.createElement('div');
+        dayNumber.className = 'day-number';
+        dayNumber.textContent = date.getDate();
+
+        const dayContent = document.createElement('div');
+        dayContent.className = 'day-content';
+
+        // Add appointments for this day
+        const dateKey = this.formatDateKey(date);
+        const timeSlots = this.generateTimeSlots();
+        
         timeSlots.forEach(time => {
-            // Time slot column
-            const timeSlot = document.createElement('div');
-            timeSlot.className = 'time-slot';
-            timeSlot.textContent = time;
-            calendar.appendChild(timeSlot);
-
-            // Appointment slots for each day
-            for (let i = 0; i < 14; i++) {
-                const date = new Date(this.currentWeekStart.getTime() + (i * 24 * 60 * 60 * 1000));
-                const dateKey = this.formatDateKey(date);
-                const appointmentSlot = document.createElement('div');
-                appointmentSlot.className = 'appointment-slot';
-                
-                const appointment = this.getAppointment(dateKey, time);
-                
-                if (appointment) {
-                    appointmentSlot.classList.add('booked');
-                    appointmentSlot.innerHTML = `
-                        <div style="font-size: 10px; line-height: 1.2;">
-                            <strong>${appointment.clientName}</strong><br>
-                            ${appointment.reason}
-                        </div>
-                    `;
-                    appointmentSlot.addEventListener('click', () => {
-                        this.showAppointmentDetails(appointment, dateKey, time);
-                    });
-                } else {
-                    appointmentSlot.classList.add('available');
-                    appointmentSlot.textContent = 'Available';
-                    appointmentSlot.addEventListener('click', () => {
-                        this.quickBookAppointment(dateKey, time);
-                    });
-                }
-
-                calendar.appendChild(appointmentSlot);
+            const appointment = this.getAppointment(dateKey, time);
+            if (appointment) {
+                const appointmentDiv = document.createElement('div');
+                appointmentDiv.className = `appointment-item ${appointment.reason.toLowerCase().replace(/[^a-z]/g, '')}`;
+                appointmentDiv.innerHTML = `
+                    <div class="time-slot">${time}</div>
+                    <div>${appointment.clientName}</div>
+                `;
+                appointmentDiv.addEventListener('click', () => {
+                    this.showAppointmentDetails(appointment, dateKey, time);
+                });
+                dayContent.appendChild(appointmentDiv);
             }
         });
-    }
 
-    createEmptyCell() {
-        const cell = document.createElement('div');
-        cell.className = 'time-slot';
-        return cell;
-    }
+        // Add click handler for empty days
+        dayDiv.addEventListener('click', (e) => {
+            if (e.target === dayDiv || e.target === dayContent) {
+                this.quickBookAppointment(dateKey, '09:00');
+            }
+        });
 
-    formatDate(date) {
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    formatDayHeader(date) {
-        return date.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
+        dayDiv.appendChild(dayNumber);
+        dayDiv.appendChild(dayContent);
+        return dayDiv;
     }
 
     formatDateKey(date) {
@@ -908,25 +509,33 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
         modal.style.display = 'block';
     }
 
-    handleAppointmentSubmission() {
+    async handleAppointmentSubmission() {
         const date = document.getElementById('appointmentDate').value;
         const time = document.getElementById('appointmentTime').value;
         const reason = document.getElementById('appointmentReason').value;
         const clientName = document.getElementById('clientName').value;
+        const clientPhone = document.getElementById('clientPhone').value;
 
-        const appointment = {
+        const appointmentData = {
+            date,
+            time,
             reason,
             clientName,
+            clientPhone,
+            bookingNumber: this.getNextBookingNumber(),
+            bookingReference: this.generateBookingReference(),
             createdAt: new Date().toISOString()
         };
 
-        this.setAppointment(date, time, appointment);
-        this.renderCalendar();
+        const result = await this.saveAppointment(appointmentData);
         
-        document.getElementById('appointmentModal').style.display = 'none';
-        document.getElementById('appointmentForm').reset();
-        
-        alert('Appointment booked successfully!');
+        if (result.success) {
+            document.getElementById('appointmentModal').style.display = 'none';
+            document.getElementById('appointmentForm').reset();
+            alert('Appointment booked successfully!');
+        } else {
+            alert(`Failed to book appointment: ${result.error}`);
+        }
     }
 
     showAppointmentDetails(appointment, date, time) {
@@ -935,10 +544,13 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
         const details = document.getElementById('appointmentDetails');
         details.innerHTML = `
             <h4>Appointment Information</h4>
+            <p><strong>Booking #:</strong> ${appointment.bookingNumber}</p>
+            <p><strong>Reference:</strong> ${appointment.bookingReference}</p>
             <p><strong>Date:</strong> ${new Date(date).toLocaleDateString()}</p>
             <p><strong>Time:</strong> ${time}</p>
             <p><strong>Client:</strong> ${appointment.clientName}</p>
-            <p><strong>Reason:</strong> ${appointment.reason}</p>
+            <p><strong>Phone:</strong> ${appointment.clientPhone}</p>
+            <p><strong>Service:</strong> ${appointment.reason}</p>
             <p><strong>Booked:</strong> ${new Date(appointment.createdAt).toLocaleString()}</p>
         `;
         
@@ -951,20 +563,24 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
             this.showAppointmentModal(date, time);
             document.getElementById('viewModal').style.display = 'none';
             
-            // Pre-fill form with existing data
             const appointment = this.getAppointment(date, time);
             document.getElementById('appointmentReason').value = appointment.reason;
             document.getElementById('clientName').value = appointment.clientName;
+            document.getElementById('clientPhone').value = appointment.clientPhone;
         }
     }
 
-    deleteSelectedAppointment() {
+    async deleteSelectedAppointment() {
         if (this.selectedSlot && confirm('Are you sure you want to cancel this appointment?')) {
-            const { date, time } = this.selectedSlot;
-            this.deleteAppointment(date, time);
-            this.renderCalendar();
-            document.getElementById('viewModal').style.display = 'none';
-            alert('Appointment cancelled successfully!');
+            const { appointment } = this.selectedSlot;
+            const result = await this.deleteAppointmentFromDB(appointment.id);
+            
+            if (result.success) {
+                document.getElementById('viewModal').style.display = 'none';
+                alert('Appointment cancelled successfully!');
+            } else {
+                alert(`Failed to cancel appointment: ${result.error}`);
+            }
         }
     }
 
@@ -975,7 +591,7 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
         slotsContainer.innerHTML = '';
         
         if (availableSlots.length === 0) {
-            slotsContainer.innerHTML = '<p>No available slots in the current 2-week period.</p>';
+            slotsContainer.innerHTML = '<p style="padding: 24px; text-align: center; color: #64748b;">No available slots in the current month.</p>';
         } else {
             availableSlots.forEach(slot => {
                 const slotElement = document.createElement('div');
@@ -997,9 +613,15 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
     getAvailableSlots() {
         const available = [];
         const timeSlots = this.generateTimeSlots();
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
         
-        for (let i = 0; i < 14; i++) {
-            const date = new Date(this.currentWeekStart.getTime() + (i * 24 * 60 * 60 * 1000));
+        // Get all days in current month
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+            const date = new Date(year, month, day);
             const dateKey = this.formatDateKey(date);
             
             timeSlots.forEach(time => {
@@ -1011,14 +633,84 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
         
         return available;
     }
-    loadSampleData() {
-    // Start with empty calendar - no sample data loaded automatically
-    // Users can click "Generate Sample Data" button to add appointments
-}
+
+    generateRandomAppointments(numberOfAppointments = 20) {
+        const clientNames = [
+            'Alice Johnson', 'Bob Smith', 'Carol Davis', 'David Wilson', 'Emma Brown',
+            'Frank Miller', 'Grace Lee', 'Henry Taylor', 'Ivy Chen', 'Jack Robinson',
+            'Kate Anderson', 'Liam Murphy', 'Maya Patel', 'Noah Garcia', 'Olivia Martinez'
+        ];
+        
+        const services = ['Consultation', 'Follow-up', 'Check-up', 'Meeting', 'Review'];
+        const timeSlots = this.generateTimeSlots();
+        let appointmentsCreated = 0;
+        
+        // Clear existing appointments in current month
+        this.clearAllAppointments();
+        
+        for (let i = 0; i < numberOfAppointments; i++) {
+            let attempts = 0;
+            
+            while (attempts < 50 && appointmentsCreated < numberOfAppointments) {
+                const year = this.currentDate.getFullYear();
+                const month = this.currentDate.getMonth();
+                const day = Math.floor(Math.random() * 28) + 1; // Safe day range
+                const appointmentDate = new Date(year, month, day);
+                const dayOfWeek = appointmentDate.getDay();
+                
+                // Skip weekends
+                if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    attempts++;
+                    continue;
+                }
+                
+                const dateKey = this.formatDateKey(appointmentDate);
+                const randomTime = timeSlots[Math.floor(Math.random() * timeSlots.length)];
+                
+                if (!this.getAppointment(dateKey, randomTime)) {
+                    const randomClient = clientNames[Math.floor(Math.random() * clientNames.length)];
+                    const randomService = services[Math.floor(Math.random() * services.length)];
+                    
+                    const appointment = {
+                        clientName: randomClient,
+                        clientPhone: '+61406910251',
+                        reason: randomService,
+                        bookingNumber: this.getNextBookingNumber(),
+                        bookingReference: this.generateBookingReference(),
+                        createdAt: new Date().toISOString(),
+                        date: dateKey,
+                        time: randomTime
+                    };
+                    
+                    this.setAppointment(dateKey, randomTime, appointment);
+                    appointmentsCreated++;
+                    break;
+                }
+                attempts++;
+            }
+        }
+        
+        this.renderCalendar();
+        return appointmentsCreated;
+    }
+
+    clearAllAppointments() {
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+        const timeSlots = this.generateTimeSlots();
+        
+        for (let day = 1; day <= 31; day++) {
+            const date = new Date(year, month, day);
+            const dateKey = this.formatDateKey(date);
+            timeSlots.forEach(time => {
+                this.deleteAppointment(dateKey, time);
+            });
+        }
+        this.renderCalendar();
+    }
 
     // API Methods for external integration
     api = {
-        // Get available slots for a specific date
         getAvailableSlots: (date) => {
             const dateKey = typeof date === 'string' ? date : this.formatDateKey(date);
             const timeSlots = this.generateTimeSlots();
@@ -1037,169 +729,16 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
             return available;
         },
 
-        // Get booked appointments for a specific date
-        getBookedSlots: (date) => {
-            const dateKey = typeof date === 'string' ? date : this.formatDateKey(date);
-            const timeSlots = this.generateTimeSlots();
-            const booked = [];
-            
-            timeSlots.forEach(time => {
-                const appointment = this.getAppointment(dateKey, time);
-                if (appointment) {
-                    booked.push({
-                        date: dateKey,
-                        time: time,
-                        appointment: appointment,
-                        timestamp: new Date(`${dateKey}T${time}:00`).getTime()
-                    });
-                }
-            });
-            
-            return booked;
+        bookAppointment: async (appointmentData) => {
+            return await this.saveAppointment(appointmentData);
         },
 
-        // Book an appointment
-        bookAppointment: (date, time, appointmentData) => {
-            const dateKey = typeof date === 'string' ? date : this.formatDateKey(date);
-            
-            // Check if slot is available
-            if (this.getAppointment(dateKey, time)) {
-                return {
-                    success: false,
-                    error: 'Time slot is already booked',
-                    suggestedTimes: this.api.getAvailableSlots(dateKey).map(slot => slot.time)
-                };
-            }
-            
-            // Validate appointment data
-            if (!appointmentData.clientName || !appointmentData.reason) {
-                return {
-                    success: false,
-                    error: 'Client name and reason are required'
-                };
-            }
-            
-            // Book the appointment
-            const appointment = {
-                ...appointmentData,
-                createdAt: new Date().toISOString()
-            };
-            
-            this.setAppointment(dateKey, time, appointment);
-            
-            // Refresh calendar if visible
-            if (this.isLoggedIn) {
-                this.renderCalendar();
-            }
-            
-            return {
-                success: true,
-                appointment: appointment,
-                date: dateKey,
-                time: time
-            };
+        cancelAppointment: async (id) => {
+            return await this.deleteAppointmentFromDB(id);
         },
 
-        // Cancel/delete an appointment
-        cancelAppointment: (date, time) => {
-            const dateKey = typeof date === 'string' ? date : this.formatDateKey(date);
-            
-            if (!this.getAppointment(dateKey, time)) {
-                return {
-                    success: false,
-                    error: 'No appointment found at this time slot'
-                };
-            }
-            
-            this.deleteAppointment(dateKey, time);
-            
-            // Refresh calendar if visible
-            if (this.isLoggedIn) {
-                this.renderCalendar();
-            }
-            
-            return {
-                success: true,
-                message: 'Appointment cancelled successfully',
-                availableSlots: this.api.getAvailableSlots(dateKey).map(slot => slot.time)
-            };
-        },
-
-        // Reschedule an appointment
-        rescheduleAppointment: (oldDate, oldTime, newDate, newTime) => {
-            const oldDateKey = typeof oldDate === 'string' ? oldDate : this.formatDateKey(oldDate);
-            const newDateKey = typeof newDate === 'string' ? newDate : this.formatDateKey(newDate);
-            
-            // Check if original appointment exists
-            const originalAppointment = this.getAppointment(oldDateKey, oldTime);
-            if (!originalAppointment) {
-                return {
-                    success: false,
-                    error: 'Original appointment not found'
-                };
-            }
-            
-            // Check if new slot is available
-            if (this.getAppointment(newDateKey, newTime)) {
-                return {
-                    success: false,
-                    error: 'New time slot is already booked',
-                    suggestedTimes: this.api.getAvailableSlots(newDateKey).map(slot => slot.time)
-                };
-            }
-            
-            // Move the appointment
-            this.deleteAppointment(oldDateKey, oldTime);
-            this.setAppointment(newDateKey, newTime, {
-                ...originalAppointment,
-                rescheduledAt: new Date().toISOString()
-            });
-            
-            // Refresh calendar if visible
-            if (this.isLoggedIn) {
-                this.renderCalendar();
-            }
-            
-            return {
-                success: true,
-                message: 'Appointment rescheduled successfully',
-                oldSlot: { date: oldDateKey, time: oldTime },
-                newSlot: { date: newDateKey, time: newTime }
-            };
-        },
-
-        // Get all appointments in a date range
-        getAppointmentsInRange: (startDate, endDate) => {
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            const appointments = [];
-            
-            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-                const dateKey = this.formatDateKey(d);
-                const dayAppointments = this.api.getBookedSlots(dateKey);
-                appointments.push(...dayAppointments);
-            }
-            
-            return appointments.sort((a, b) => a.timestamp - b.timestamp);
-        },
-
-        // Get appointment statistics
-        getStatistics: () => {
-            const now = new Date();
-            const startOfWeek = this.getWeekStart(now);
-            const endOfWeek = new Date(startOfWeek.getTime() + (13 * 24 * 60 * 60 * 1000));
-            
-            const appointments = this.getAppointmentsInRange(startOfWeek, endOfWeek);
-            const totalSlots = 14 * this.generateTimeSlots().length; // 14 days * time slots per day
-            
-            return {
-                totalAppointments: appointments.length,
-                totalAvailableSlots: totalSlots - appointments.length,
-                occupancyRate: ((appointments.length / totalSlots) * 100).toFixed(1) + '%',
-                upcomingAppointments: appointments.filter(apt => 
-                    new Date(apt.timestamp) > now
-                ).length
-            };
+        searchByPhone: async (phone) => {
+            return await this.searchByPhone(phone);
         }
     };
 }
@@ -1210,66 +749,8 @@ const bookingSystem = new AppointmentBookingSystem();
 // Expose API globally for external access
 window.BookingAPI = bookingSystem.api;
 
-// Example usage of the API (can be called from browser console or external scripts)
-window.addEventListener('load', () => {
-    // Example API calls (uncomment to test):
-    
-    /* 
-    // Get available slots for today
-    console.log('Available slots for today:', BookingAPI.getAvailableSlots(new Date()));
-    
-    // Book an appointment
-    const result = BookingAPI.bookAppointment('2025-06-27', '11:00', {
-        clientName: 'API Test Client',
-        reason: 'API Testing Session'
-    });
-    console.log('Booking result:', result);
-    
-    // Get statistics
-    console.log('Current statistics:', BookingAPI.getStatistics());
-    */
-});
-
-// Additional utility functions for external integration
-window.BookingUtils = {
-    // Format date for API calls
-    formatDate: (date) => {
-        return date.toISOString().split('T')[0];
-    },
-    
-    // Parse time string to 24-hour format
-    parseTime: (timeString) => {
-        const [hours, minutes] = timeString.split(':');
-        return { hours: parseInt(hours), minutes: parseInt(minutes) };
-    },
-    
-    // Get next available slot
-    getNextAvailable: () => {
-        const today = new Date();
-        for (let i = 0; i < 30; i++) { // Check next 30 days
-            const checkDate = new Date(today.getTime() + (i * 24 * 60 * 60 * 1000));
-            const available = BookingAPI.getAvailableSlots(checkDate);
-            if (available.length > 0) {
-                return available[0]; // Return first available slot
-            }
-        }
-        return null;
-    },
-    
-    // Bulk operations
-    bulkCancel: (appointments) => {
-        const results = [];
-        appointments.forEach(apt => {
-            const result = BookingAPI.cancelAppointment(apt.date, apt.time);
-            results.push({ ...apt, result });
-        });
-        return results;
-    }
-};
-
-console.log('Appointment Booking System loaded successfully!');
+console.log('Modern Appointment Booking System loaded successfully!');
 console.log('Available APIs:', Object.keys(window.BookingAPI));
-console.log('Available Utils:', Object.keys(window.BookingUtils));
     </script>
 </body>
 </html>
