@@ -12,6 +12,83 @@ body {
     line-height: 1.6;
 }
 
+.refresh-btn {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+.refresh-btn:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    transform: translateY(-1px);
+}
+
+.refresh-btn:active {
+    transform: translateY(0);
+}
+
+.refresh-btn:disabled {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.refresh-icon {
+    width: 18px;
+    height: 18px;
+    color: #6b7280;
+    transition: transform 0.3s ease;
+}
+
+.refresh-btn:hover .refresh-icon {
+    color: #374151;
+}
+
+/* Rotating animation */
+.refresh-btn.rotating .refresh-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Success state */
+.refresh-btn.success {
+    background: #d1fae5;
+    border-color: #10b981;
+}
+
+.refresh-btn.success .refresh-icon {
+    color: #10b981;
+}
+
+/* Error state */
+.refresh-btn.error {
+    background: #fee2e2;
+    border-color: #ef4444;
+}
+
+.refresh-btn.error .refresh-icon {
+    color: #ef4444;
+}
+
 /* Login Styles */
 .login-container {
     display: flex;

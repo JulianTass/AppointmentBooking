@@ -119,7 +119,199 @@ app.get('/api/appointments/slots/:date', (req, res) => {
     });
 });
 
+app.delete('/api/appointments', (req, res) => {
+    console.log('🗑️ Clearing ALL appointments from server array...');
+    
+    const deletedCount = bookings.length;
+    const deletedAppointments = [...bookings]; // Copy for logging
+    
+    // Clear the entire bookings array
+    bookings.length = 0;
+    
+    console.log(`✅ Cleared ${deletedCount} appointments from server`);
+    console.log('📊 Remaining bookings:', bookings.length);
+    
+    res.json({
+        success: true,
+        message: `Successfully deleted ${deletedCount} appointments`,
+        deletedCount: deletedCount,
+        deletedAppointments: deletedAppointments,
+        remainingBookings: bookings.length
+    });
+});
 
+
+
+app.post('/api/appointments', (req, res) => {
+    const { utcTime, clientName, clientPhone, reason } = req.body;
+    
+    console.log(`📝 Booking appointment from Genesys UTC: ${utcTime}`);
+    
+    // Validate required fields
+    if (!utcTime || !clientName || !clientPhone || !reason) {
+        return res.status(400).json({
+            success: false,
+            message: 'Missing required fields: utcTime, clientName, clientPhone, reason'
+        });
+    }
+    
+    // Convert Genesys UTC back to Sydney local time
+    const utcDate = new Date(utcTime);
+    
+    // Convert to Sydney timezone - this gives us the original local time the user picked
+    const sydneyDate = utcDate.toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' }); // YYYY-MM-DD
+    const sydneyTime = utcDate.toLocaleTimeString('en-GB', { 
+        timeZone: 'Australia/Sydney',
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+    }); // HH:MM format
+    
+    console.log(`🔄 Genesys UTC ${utcTime} → Sydney Local: ${sydneyDate} ${sydneyTime}`);
+    
+    // Validate it's a business hour (the converted Sydney time should match business hours)
+    const businessHours = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+    if (!businessHours.includes(sydneyTime)) {
+        return res.status(400).json({
+            success: false,
+            message: `Invalid business hour. UTC ${utcTime} converts to ${sydneyTime} Sydney time, which is outside business hours (09:00-16:00).`,
+            availableHours: businessHours,
+            convertedSydneyTime: `${sydneyDate} ${sydneyTime}`
+        });
+    }
+    
+    // Check if the Sydney time slot is already booked
+    const existingBooking = bookings.find(booking => 
+        booking.date === sydneyDate && 
+        booking.time === sydneyTime && 
+        booking.status === 'active'
+    );
+    
+    if (existingBooking) {
+        return res.status(409).json({
+            success: false,
+            message: 'Time slot already booked',
+            conflictingBooking: {
+                client: existingBooking.clientName,
+                bookingReference: existingBooking.bookingReference,
+                sydneyDateTime: `${sydneyDate} ${sydneyTime}`
+            }
+        });
+    }
+    
+    // Generate booking reference and ID
+    const bookingRef = `APT-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 999999)).padStart(6, '0')}`;
+    const newId = bookings.length + 1;
+    
+    // Store with Sydney local time (so UI shows 9:00 AM when user picked 9:00 AM)
+    const newAppointment = {
+        id: newId,
+        bookingReference: bookingRef,
+        clientName,
+        clientPhone,
+        date: sydneyDate,          // Sydney date for UI display
+        time: sydneyTime,          // Sydney time for UI display (shows user's original choice)
+        utcTime: utcTime,          // Keep original Genesys UTC for reference
+        reason,
+        status: 'active',
+        createdAt: new Date().toISOString()
+    };
+    
+    // Add to bookings array
+    bookings.push(newAppointment);
+    
+    console.log(`✅ Appointment booked successfully:`);
+    console.log(`   📋 Reference: ${bookingRef}`);
+    console.log(`   👤 Client: ${clientName}`);
+    console.log(`   🌍 Original Genesys UTC: ${utcTime}`);
+    console.log(`   🇦🇺 Displayed as Sydney: ${sydneyDate} at ${sydneyTime}`);
+    console.log(`   📊 Total bookings: ${bookings.length}`);
+    
+    // Return success response
+    res.status(201).json({
+        success: true,
+        message: 'Appointment booked successfully',
+        appointment: {
+            ...newAppointment,
+            timeInfo: getTimeInfo(newAppointment.date, newAppointment.time)
+        },
+        conversion: {
+            genesysUtcInput: utcTime,
+            displayedAsSydney: `${sydneyDate} ${sydneyTime}`,
+            note: "User's original local time choice is preserved for display"
+        },
+        totalBookings: bookings.length
+    });
+});
+
+// 📅 Alternative endpoint with month name (e.g., /api/appointments/available/2025/june)
+
+// Add this new endpoint to your index.js file after the existing endpoints
+
+// 🌍 Simple endpoint to see available slots by day with UTC times
+app.get('/api/appointments/available-utc/:year/:month', (req, res) => {
+    const { year, month } = req.params;
+    
+    const yearNum = parseInt(year);
+    const monthNum = parseInt(month);
+    
+    if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid year or month. Month should be 1-12.'
+        });
+    }
+
+    console.log(`🌍 Getting available slots for ${monthNum}/${yearNum}`);
+    
+    const businessHours = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+    const firstDay = new Date(yearNum, monthNum - 1, 1);
+    const lastDay = new Date(yearNum, monthNum, 0);
+    
+    const available = [];
+    
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+        const currentDate = new Date(yearNum, monthNum - 1, day);
+        const dayOfWeek = currentDate.getDay();
+        
+        // Skip weekends
+        if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+        
+        const dateString = currentDate.toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' });
+        const dayName = currentDate.toLocaleDateString('en-US', { weekday: 'long' });
+        
+        // Get booked times for this day
+        const bookedTimes = bookings
+            .filter(b => b.date === dateString && b.status === 'active')
+            .map(b => b.time);
+        
+        // Get available times for this day
+        const availableTimes = businessHours
+            .filter(time => !bookedTimes.includes(time))
+            .map(time => {
+                const sydneyDateTime = new Date(`${dateString}T${time}:00+10:00`);
+                return {
+                    localTime: time,
+                    utc: sydneyDateTime.toISOString()
+                };
+            });
+        
+        if (availableTimes.length > 0) {
+            available.push({
+                date: dateString,
+                dayName: dayName,
+                availableSlots: availableTimes
+            });
+        }
+    }
+
+    res.json({
+        success: true,
+        month: `${firstDay.toLocaleDateString('en-US', { month: 'long' })} ${yearNum}`,
+        totalBookings: bookings.length,
+        available: available
+    });
+});
 
 
 // 🎲 Generate sample appointments endpoint

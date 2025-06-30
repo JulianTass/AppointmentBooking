@@ -36,13 +36,19 @@
                     <h1>Calendar</h1>
                 </div>
                 <div class="header-right">
+                    <button id="refreshBtn" class="refresh-btn" title="Refresh Calendar">
+                        <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="m20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                        </svg>
+                    </button>
                     <button id="addAppointmentBtn" class="add-btn">+ Add Appointment</button>
                     <div class="user-menu">
                         <span id="currentUser">Admin</span>
                         <button id="logoutBtn" class="logout-btn">Logout</button>
                     </div>
                 </div>
-            </div>
         </header>
 
         <!-- Calendar Navigation -->
@@ -88,6 +94,7 @@
 
         <!-- Quick Actions -->
         <div class="quick-actions">
+            <button id="refreshBtn" class="action-btn primary">🔄 Refresh Calendar</button>
             <button id="viewAvailableBtn" class="action-btn secondary">View Available Slots</button>
             <button id="generateSampleBtn" class="action-btn secondary">🎲 Generate Sample Data</button>
             <button id="clearAllBtn" class="action-btn danger">🗑️ Clear All</button>
@@ -280,6 +287,10 @@ class AppointmentBookingSystem {
             this.navigateMonth(-1);
         });
 
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+    this.refreshCalendar();
+});
+
         document.getElementById('nextWeeks').addEventListener('click', () => {
             this.navigateMonth(1);
         });
@@ -368,6 +379,8 @@ class AppointmentBookingSystem {
         console.error('Error loading appointments:', error);
     }
 }
+
+
 
 
     handleLogout() {
@@ -512,6 +525,51 @@ class AppointmentBookingSystem {
 
         modal.style.display = 'block';
     }
+
+    async refreshCalendar() {
+    console.log('🔄 Refreshing calendar...');
+    
+    const refreshBtn = document.getElementById('refreshBtn');
+    const refreshIcon = refreshBtn.querySelector('.refresh-icon');
+    
+    // Add rotating animation
+    refreshBtn.classList.add('rotating');
+    refreshBtn.disabled = true;
+    
+    try {
+        // Reload appointments from server
+        await this.loadAppointments();
+        
+        // Re-render the calendar
+        this.renderCalendar();
+        
+        console.log('✅ Calendar refreshed successfully');
+        
+        // Show success state
+        refreshBtn.classList.remove('rotating');
+        refreshBtn.classList.add('success');
+        
+        // Reset after 800ms
+        setTimeout(() => {
+            refreshBtn.classList.remove('success');
+            refreshBtn.disabled = false;
+        }, 800);
+        
+    } catch (error) {
+        console.error('❌ Failed to refresh calendar:', error);
+        
+        // Show error state
+        refreshBtn.classList.remove('rotating');
+        refreshBtn.classList.add('error');
+        
+        // Reset after 1500ms
+        setTimeout(() => {
+            refreshBtn.classList.remove('error');
+            refreshBtn.disabled = false;
+        }, 1500);
+    }
+}
+
 
     async handleAppointmentSubmission() {
         const date = document.getElementById('appointmentDate').value;
@@ -658,21 +716,39 @@ class AppointmentBookingSystem {
 }
 
        
-    clearAllAppointments() { 
-        const year = this.currentDate.getFullYear();
-        const month = this.currentDate.getMonth();
-        const timeSlots = this.generateTimeSlots();
-        
-        for (let day = 1; day <= 31; day++) {
-            const date = new Date(year, month, day);
-            const dateKey = this.formatDateKey(date);
-            timeSlots.forEach(time => {
-                this.deleteAppointment(dateKey, time);
-            });
-        }
-        this.renderCalendar();
+async clearAllAppointments() {
+    if (!confirm('Are you sure you want to clear ALL appointments? This cannot be undone!')) {
+        return;
     }
-
+    
+    console.log('🗑️ Clearing all appointments from server...');
+    
+    try {
+        const response = await fetch(`${this.apiUrl}/appointments`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            
+            // Clear local appointments object
+            this.appointments = {};
+            
+            // Re-render calendar
+            this.renderCalendar();
+            
+            console.log(`✅ Cleared ${result.deletedCount} appointments`);
+            alert(`Successfully cleared ${result.deletedCount} appointments!`);
+        } else {
+            const error = await response.json();
+            console.error('❌ Failed to clear appointments:', error);
+            alert('Failed to clear appointments: ' + error.message);
+        }
+    } catch (error) {
+        console.error('❌ Network error clearing appointments:', error);
+        alert('Network error: Could not clear appointments');
+    }
+}
     // API Methods for external integration
     api = {
         getAvailableSlots: (date) => {
