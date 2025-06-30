@@ -187,24 +187,7 @@ class AppointmentBookingSystem {
     }
 
     // API Integration Methods
-    async loadAppointments() {
-        try {
-            const response = await fetch(`${this.apiUrl}/appointments`);
-            if (response.ok) {
-                const appointments = await response.json();
-                this.appointments = {};
-                appointments.forEach(apt => {
-                    const key = `${apt.date}_${apt.time}`;
-                    this.appointments[key] = apt;
-                });
-                if (this.isLoggedIn) {
-                    this.renderCalendar();
-                }
-            }
-        } catch (error) {
-            console.error('Failed to load appointments:', error);
-        }
-    }
+
 
     async saveAppointment(appointmentData) {
         try {
@@ -311,7 +294,7 @@ class AppointmentBookingSystem {
         });
 
         document.getElementById('generateSampleBtn').addEventListener('click', () => {
-            const created = this.generateRandomAppointments(25);
+            const created = this.generateSampleAppointments();
             alert(`Generated ${created} random appointments!`);
         });
 
@@ -360,11 +343,32 @@ class AppointmentBookingSystem {
             this.isLoggedIn = true;
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
+            this.loadAppointments();
             this.renderCalendar();
         } else {
             alert('Invalid credentials. Use admin/admin');
         }
     }
+
+    async loadAppointments() {
+    try {
+        const response = await fetch(`${this.apiUrl}/appointments`);
+        if (response.ok) {
+            const result = await response.json();
+            this.appointments = {};
+            result.appointments.forEach(apt => {
+                const key = `${apt.date}_${apt.time}`;
+                this.appointments[key] = apt;
+            });
+            this.renderCalendar();
+        } else {
+            console.error('Failed to load appointments:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error loading appointments:', error);
+    }
+}
+
 
     handleLogout() {
         this.isLoggedIn = false;
@@ -467,8 +471,8 @@ class AppointmentBookingSystem {
     }
 
     formatDateKey(date) {
-        return date.toISOString().split('T')[0];
-    }
+    return date.toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' }); // Ensures 'YYYY-MM-DD'
+}
 
     getAppointment(date, time) {
         return this.appointments[`${date}_${time}`];
@@ -634,67 +638,27 @@ class AppointmentBookingSystem {
         return available;
     }
 
-    generateRandomAppointments(numberOfAppointments = 20) {
-        const clientNames = [
-            'Alice Johnson', 'Bob Smith', 'Carol Davis', 'David Wilson', 'Emma Brown',
-            'Frank Miller', 'Grace Lee', 'Henry Taylor', 'Ivy Chen', 'Jack Robinson',
-            'Kate Anderson', 'Liam Murphy', 'Maya Patel', 'Noah Garcia', 'Olivia Martinez'
-        ];
+    async generateSampleAppointments() {
+    try {
+        const response = await fetch(`${this.apiUrl}/appointments/generate-sample`);
         
-        const services = ['Consultation', 'Follow-up', 'Check-up', 'Meeting', 'Review'];
-        const timeSlots = this.generateTimeSlots();
-        let appointmentsCreated = 0;
-        
-        // Clear existing appointments in current month
-        this.clearAllAppointments();
-        
-        for (let i = 0; i < numberOfAppointments; i++) {
-            let attempts = 0;
-            
-            while (attempts < 50 && appointmentsCreated < numberOfAppointments) {
-                const year = this.currentDate.getFullYear();
-                const month = this.currentDate.getMonth();
-                const day = Math.floor(Math.random() * 28) + 1; // Safe day range
-                const appointmentDate = new Date(year, month, day);
-                const dayOfWeek = appointmentDate.getDay();
-                
-                // Skip weekends
-                if (dayOfWeek === 0 || dayOfWeek === 6) {
-                    attempts++;
-                    continue;
-                }
-                
-                const dateKey = this.formatDateKey(appointmentDate);
-                const randomTime = timeSlots[Math.floor(Math.random() * timeSlots.length)];
-                
-                if (!this.getAppointment(dateKey, randomTime)) {
-                    const randomClient = clientNames[Math.floor(Math.random() * clientNames.length)];
-                    const randomService = services[Math.floor(Math.random() * services.length)];
-                    
-                    const appointment = {
-                        clientName: randomClient,
-                        clientPhone: '+61406910251',
-                        reason: randomService,
-                        bookingNumber: this.getNextBookingNumber(),
-                        bookingReference: this.generateBookingReference(),
-                        createdAt: new Date().toISOString(),
-                        date: dateKey,
-                        time: randomTime
-                    };
-                    
-                    this.setAppointment(dateKey, randomTime, appointment);
-                    appointmentsCreated++;
-                    break;
-                }
-                attempts++;
-            }
+        if (response.ok) {
+            // After generating, fetch the full list of appointments from the backend
+            await this.loadAppointments();
+            this.renderCalendar();
+            return 25; // Always generates 25 appointments
+        } else {
+            console.error('Failed to generate sample appointments');
+            return 0;
         }
-        
-        this.renderCalendar();
-        return appointmentsCreated;
+    } catch (error) {
+        console.error('Failed to generate sample appointments:', error);
+        return 0;
     }
+}
 
-    clearAllAppointments() {
+       
+    clearAllAppointments() { 
         const year = this.currentDate.getFullYear();
         const month = this.currentDate.getMonth();
         const timeSlots = this.generateTimeSlots();
